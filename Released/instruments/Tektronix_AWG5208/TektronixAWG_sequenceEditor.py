@@ -384,25 +384,17 @@ class Time_Domain_Sequence(Waveform):
         store_SPT_seq = {'QubitDrive_f12':{}, 'QubitDrive_f01':{}, 'ReadOut':{}}
         
         for i in range(gen_wfm_amount):
-            qb_f12wfm_name = 'QubitDrive_f12_Index_' + str(i+1) 
-            qb_f12_pulsewidth = 2 * self._num_sigma * gauss_sig
-            qb_f12_offset = rd_offset - qb_f12_pulsewidth
+            qb_f01wfm_name = 'QubitDrive_f01_Index_' + str(i+1) 
+            qb_f01_pulsewidth = 2 * self._num_sigma * gauss_sig
+            qb_f01_offset = rd_offset - qb_f01_pulsewidth
             
             qb_delay = i * qb_t_tsdelta 
-            qb_f01wfm_name = 'QubitDrive_f01_Index_' + str(i+1) 
-            qb_f01_offset = rd_offset - qb_f12_pulsewidth - qb_delay
+            qb_f12wfm_name = 'QubitDrive_f12_Index_' + str(i+1) 
+            qb_f12_offset = rd_offset - qb_f01_pulsewidth - qb_delay
             
             rd_wfm_name = 'ReadOut_Index_' + str(i+1)
             no = i + 1 
             
-            store_SPT_seq['QubitDrive_f12'][no] = \
-                                        self.gen_gauss_wfmdata(qb_f12wfm_name,
-                                                                wfm_totlen,
-                                                                qb_f12_offset,
-                                                                gauss_sig,
-                                                                qb_f12flat, 
-                                                                qb_f12mkr_duration,
-                                                                qb_f01mkr_tone)
             store_SPT_seq['QubitDrive_f01'][no] = \
                                         self.gen_gauss_wfmdata(qb_f01wfm_name,
                                                                 wfm_totlen,
@@ -411,6 +403,14 @@ class Time_Domain_Sequence(Waveform):
                                                                 qb_f01flat, 
                                                                 qb_f01mkr_duration,
                                                                 qb_f01mkr_tone)
+            store_SPT_seq['QubitDrive_f12'][no] = \
+                                        self.gen_gauss_wfmdata(qb_f12wfm_name,
+                                                                wfm_totlen,
+                                                                qb_f12_offset,
+                                                                gauss_sig,
+                                                                qb_f12flat, 
+                                                                qb_f12mkr_duration,
+                                                                qb_f12mkr_tone)
             
             store_SPT_seq['ReadOut'][no] = \
                                      self.gen_gauss_wfmdata(rd_wfm_name,
