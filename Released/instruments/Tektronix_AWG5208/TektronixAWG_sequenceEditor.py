@@ -552,6 +552,70 @@ class Time_Domain_Sequence(Waveform):
 
         """
         pass
+    
+    def gen_SPT_DarkState_Coherence_seq(self, gen_wfm_amount:int, wfm_totlen:int, gauss_sig:int,
+                   qb_f12mkr_duration:int, qb_f12mkr_tone:str,
+                   qb_t_tsdelta:int, qb_f01_relaxation_delta:int,
+                   qb_f01mkr_duration:int, qb_f01mkr_tone:str,
+                   rd_offset:int, rd_flat:int, rd_mkr_duration:int,
+                   rd_mkr_tone:str)->dict:
+        """
+        Description:
+        
+        Args:
+        
+        Example:
+        
+        """
+        qb_f01flat = 0
+        qb_f12flat = 0
+        
+        
+        store_SPT_DarkState_Coherence_seq = {'QubitDrive_f12':{}, 'QubitDrive_f01':{}, 'ReadOut':{}}
+        
+        for i in range(gen_wfm_amount):
+            qb_f01wfm_name = 'QubitDrive_f01_Index_' + str(i+1) 
+            qb_f01_pulsewidth = 2 * self._num_sigma * gauss_sig
+            qb_f01_offset = rd_offset - qb_f01_pulsewidth - i * qb_f01_relaxation_delta
+            
+            qb_delay = qb_t_tsdelta 
+            qb_f12wfm_name = 'QubitDrive_f12_Index_' + str(i+1) 
+            qb_f12_offset = qb_f01_offset - qb_delay
+            
+            rd_wfm_name = 'ReadOut_Index_' + str(i+1)
+            no = i + 1 
+            
+            store_SPT_DarkState_Coherence_seq['QubitDrive_f12'][no] = \
+                                        self.gen_gauss_wfmdata(qb_f12wfm_name,
+                                                                wfm_totlen,
+                                                                qb_f12_offset,
+                                                                gauss_sig,
+                                                                qb_f12flat, 
+                                                                qb_f12mkr_duration,
+                                                                qb_f01mkr_tone)
+            
+            store_SPT_DarkState_Coherence_seq['QubitDrive_f01'][no] = \
+                                        self.gen_gauss_wfmdata(qb_f01wfm_name,
+                                                                wfm_totlen,
+                                                                qb_f01_offset,
+                                                                gauss_sig,
+                                                                qb_f01flat, 
+                                                                qb_f01mkr_duration,
+                                                                qb_f01mkr_tone)
+            
+            store_SPT_DarkState_Coherence_seq['ReadOut'][no] = \
+                                     self.gen_gauss_wfmdata(rd_wfm_name,
+                                                            wfm_totlen, 
+                                                            rd_offset, 
+                                                            gauss_sig,
+                                                            rd_flat,
+                                                            rd_mkr_duration, 
+                                                            rd_mkr_tone)
+        
+        return store_SPT_DarkState_Coherence_seq
+    
+    
+    
 
 if __name__=='__main__':
     import pprint as pp
@@ -565,192 +629,4 @@ if __name__=='__main__':
     Get the more details of the object named Sequence by the function named Help
     """
     # help(Sequence())
-    """ 
-    Generate a waveform with a single gaussian
-    """
-    # result = test.gen_gauss_wfmdata('gaussian', 
-    #                                 10000,
-    #                                 1000,
-    #                                 100,
-    #                                 1000,
-    #                                 0,
-    #                                 'mkr1')
-    # x = [i for i in range(len(result['wfmData']))]
-    # plt.plot(x, result['wfmData'])
-    # plt.show()
-    # pp.pprint(result)                                                              
-    """
-    Generate a rabi-sequence with several variety of waveforms
-    """
-    # wfm_amount = 10
-    # wfm_totlen = 10000
-    # gauss_sig = 100
-    # gauss_delta_flat = 200
-    # qubitDrive_mkrDuration = 0
-    # qubitDrive_mkr = 'no_mkr'
-
-    # readOut_offset = 5000
-    # readOut_flat = 2400
-    # readOut_mkrDuration = 200
-    # readOut_mkr = 'mkr1'
     
-    # store_rabi_seq = {}
-
-    # store_rabi_seq = test.gen_Rabi_seq(wfm_amount,
-    #                                     wfm_totlen,
-    #                                     gauss_sig,
-    #                                     gauss_delta_flat,
-    #                                     qubitDrive_mkrDuration,
-    #                                     qubitDrive_mkr,
-    #                                     readOut_offset,
-    #                                     readOut_flat,
-    #                                     readOut_mkrDuration,
-    #                                     readOut_mkr)
-    # pp.pprint(store_rabi_seq)
-    """
-    Generate a T1-sequence with several variety of waveforms
-    """
-    # wfm_amount = 10
-    # wfm_totlen = 10000
-    # gauss_sig = 100
-    
-    # qubitDrive_delay_time_delta = 100
-    # qubitDrive_flat = 80
-    # qubitDrive_mkrDuration = 0
-    # qubitDrive_mkr = 'no_mkr'
-
-    # readOut_offset = 4000
-    # readOut_flat = 2400
-    # readOut_mkrDuration = 200
-    # readOut_mkr = 'mkr1'
-    
-    # store_t1_seq = {}
-
-    # store_t1_seq = test.gen_T1_seq(wfm_amount,
-    #                                 wfm_totlen,
-    #                                 gauss_sig,
-    #                                 qubitDrive_delay_time_delta,
-    #                                 qubitDrive_flat,
-    #                                 qubitDrive_mkrDuration,
-    #                                 qubitDrive_mkr,
-    #                                 readOut_offset,
-    #                                 readOut_flat,
-    #                                 readOut_mkrDuration,
-    #                                 readOut_mkr)
-    # pp.pprint(store_t1_seq)
-    """
-    Generate a T2-ramsey-sequence with several variety of waveforms
-    """
-    # wfm_amount = 10
-    # wfm_totlen = 10000
-    # gauss_sig = 100
-    
-    # qubitDrive_delay_time_delta = 50
-    # qubitDrive_flat = 60
-    # qubitDrive_mkrDuration = 0
-    # qubitDrive_mkr = 'no_mkr'
-
-    # readOut_offset = 6000
-    # readOut_flat = 2400
-    # readOut_mkrDuration = 200
-    # readOut_mkr = 'mkr1'
-    
-    # store_t2_ramsey_seq = {}
-
-    # store_t2_ramsey_seq = test.gen_T2_ramsey_seq(wfm_amount,
-    #                                             wfm_totlen,
-    #                                             gauss_sig,
-    #                                             qubitDrive_delay_time_delta,
-    #                                             qubitDrive_flat,
-    #                                             qubitDrive_mkrDuration,
-    #                                             qubitDrive_mkr,
-    #                                             readOut_offset,
-    #                                             readOut_flat,
-    #                                             readOut_mkrDuration,
-    #                                             readOut_mkr)
-    # pp.pprint(store_t2_ramsey_seq)
-    """
-    Generate a T2-echo-sequence with several variety of waveforms
-    """
-    # wfm_amount = 10
-    # wfm_totlen = 10000
-    # gauss_sig = 100
-    
-    # qubitDrive_delay_time_delta = 200
-    # qubitDrive_flat_pi_divby2 = 58
-    # qubitDrive_flat_pi = 80
-    # qubitDrive_mkrDuration = 0
-    # qubitDrive_mkr = 'no_mkr'
-
-    # readOut_offset = 6000
-    # readOut_flat = 2400
-    # readOut_mkrDuration = 200
-    # readOut_mkr = 'mkr1'
-    
-    # store_T2_echo_seq = {}
-
-    # store_T2_echo_seq = test.gen_T2_echo_seq(wfm_amount,
-    #                                             wfm_totlen,
-    #                                             gauss_sig,
-    #                                             qubitDrive_delay_time_delta,
-    #                                             qubitDrive_flat_pi_divby2,
-    #                                             qubitDrive_flat_pi,
-    #                                             qubitDrive_mkrDuration,
-    #                                             qubitDrive_mkr,
-    #                                             readOut_offset,
-    #                                             readOut_flat,
-    #                                             readOut_mkrDuration,
-    #                                             readOut_mkr)
-    # pp.pprint(store_T2_echo_seq)
-    """
-    Generate an EIT-sequence with several variety of waveforms
-    """
-    """
-    wfm_amount = 2
-    wfm_totlen = 10000
-    gauss_sig = 100
-    
-    qubitDrive_delay_time_delta = 40
-    qubitDrive_gauss_sig_front = 100
-    qubitDrive_gauss_flat_front = 300
-    qubitDrive_gauss_sig_back = 100
-    qubitDrive_gauss_flat_back = 100
-    qubitDrive_mkrDuration = 0
-    qubitDrive_mkr = 'no_mkr'
-    
-    readOut_sigma = 100
-    readOut_offset = 6000
-    readOut_flat = 2400
-    readOut_mkrDuration = 200
-    readOut_mkr = 'mkr1'
-    
-    store_EIT_seq = {}
-
-    store_EIT_seq = test.gen_EIT_seq(wfm_amount,
-                                        wfm_totlen,
-                                        qubitDrive_delay_time_delta,
-                                        qubitDrive_gauss_sig_front,
-                                        qubitDrive_gauss_sig_back,
-                                        qubitDrive_gauss_flat_front,
-                                        qubitDrive_gauss_flat_back,
-                                        qubitDrive_mkrDuration,
-                                        qubitDrive_mkr,
-                                        readOut_sigma,
-                                        readOut_offset,
-                                        readOut_flat,
-                                        readOut_mkrDuration,
-                                        readOut_mkr)
-    
-    pp.pprint(store_EIT_seq)
-
-    for track in tuple(store_EIT_seq.keys()):
-        print(track)
-        for step in store_EIT_seq[track].keys():
-            print('step: {}'.format(step))
-            print('wfm_name: ', store_EIT_seq[track][step]['wfm_name'])
-            print('wfmData', store_EIT_seq[track][step]['wfmData'])
-            print('mkrData', store_EIT_seq[track][step]['mkrData'])
-            print('mkr_tone', store_EIT_seq[track][step]['mkr_tone'])
-            if step == tuple(store_EIT_seq[track].keys())[-1]:
-                print('last step: ', step)
-   """
