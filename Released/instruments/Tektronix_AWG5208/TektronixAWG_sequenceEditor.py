@@ -636,7 +636,7 @@ class Time_Domain_Sequence(Waveform):
             qb_f01wfm_name = 'QubitDrive_f01_Index_' + str(i+1) 
             qb_f01_pulsewidth = 2 * self._num_sigma * gauss_sig
             qb_f01_offset_front = rd_offset - qb_f01_pulsewidth 
-            qb_f01_offset_back  = qb_f01_offset_front - i * relaxation_delta
+            qb_f01_offset_back  = qb_f01_offset_front - qb_f01_pulsewidth - i * relaxation_delta
             
             qb_delay = qb_t_tsdelta 
             qb_f12wfm_name = 'QubitDrive_f12_Index_' + str(i+1) 
