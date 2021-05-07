@@ -615,7 +615,7 @@ class Time_Domain_Sequence(Waveform):
         return store_APT_DarkState_Coherence_seq
     
     
-    def gen_APT_DarkState_Coherence_Ramsey_seq(self, gen_wfm_amount:int, wfm_totlen:int,gauss_sig:int, qb_f12mkr_duration:int,qb_f12mkr_tone:str,qb_t_tsdelta:int, qb_f12_relaxation_delta:int,qb_f01mkr_duration:int, qb_f01mkr_tone:str,rd_offset:int, rd_flat:int, rd_mkr_duration:int,rd_mkr_tone:str)->dict:
+    def gen_APT_DarkState_Coherence_Ramsey_seq(self, gen_wfm_amount:int, wfm_totlen:int,gauss_sig:int, qb_f12mkr_duration:int,qb_f12mkr_tone:str,qb_t_tsdelta:int, relaxation_delta:int,qb_f01mkr_duration:int, qb_f01mkr_tone:str,rd_offset:int, rd_flat:int, rd_mkr_duration:int,rd_mkr_tone:str)->dict:
                    
                    
         """
@@ -635,28 +635,32 @@ class Time_Domain_Sequence(Waveform):
         for i in range(gen_wfm_amount):
             qb_f01wfm_name = 'QubitDrive_f01_Index_' + str(i+1) 
             qb_f01_pulsewidth = 2 * self._num_sigma * gauss_sig
-            qb_f01_offset = rd_offset - qb_f01_pulsewidth 
+            qb_f01_offset_front = rd_offset - qb_f01_pulsewidth 
+            qb_f01_offset_back  = qb_f01_offset_front - i * relaxation_delta
             
             qb_delay = qb_t_tsdelta 
             qb_f12wfm_name = 'QubitDrive_f12_Index_' + str(i+1) 
-            qb_f12_offset = qb_f01_offset - qb_delay - i * qb_f12_relaxation_delta
+            qb_f12_offset_front = qb_f01_offset_front - qb_delay
+            qb_f12_offset_back  = qb_f01_offset_back  - qb_delay
             
             rd_wfm_name = 'ReadOut_Index_' + str(i+1)
             no = i + 1 
             
             store_APT_DarkState_Coherence_Ramsey_seq['QubitDrive_f12'][no] = \
-                                        self.gen_gauss_wfmdata(qb_f12wfm_name,
+                                        self._gen_T2_ramsey_wfmdata(qb_f12wfm_name,
                                                                 wfm_totlen,
-                                                                qb_f12_offset,
+                                                                qb_f12_offset_front,
+                                                                qb_f12_offset_back,
                                                                 gauss_sig,
                                                                 qb_f12flat, 
                                                                 qb_f12mkr_duration,
                                                                 qb_f01mkr_tone)
             
             store_APT_DarkState_Coherence_Ramsey_seq['QubitDrive_f01'][no] = \
-                                        self.gen_gauss_wfmdata(qb_f01wfm_name,
+                                        self._gen_T2_ramsey_wfmdata(qb_f01wfm_name,
                                                                 wfm_totlen,
-                                                                qb_f01_offset,
+                                                                qb_f01_offset_front,
+                                                                qb_f01_offset_back,
                                                                 gauss_sig,
                                                                 qb_f01flat, 
                                                                 qb_f01mkr_duration,
@@ -673,6 +677,7 @@ class Time_Domain_Sequence(Waveform):
         
         return store_APT_DarkState_Coherence_Ramsey_seq
     
+  
 
 if __name__=='__main__':
     import pprint as pp
