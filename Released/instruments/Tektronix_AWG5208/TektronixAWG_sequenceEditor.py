@@ -363,7 +363,7 @@ class Time_Domain_Sequence(Waveform):
                                                             rd_mkr_tone)
         return store_T2_echo_seq
     
-    def gen_SPT_seq(self, gen_wfm_amount:int, wfm_totlen:int, gauss_sig:int,
+    def gen_APT_seq(self, gen_wfm_amount:int, wfm_totlen:int, gauss_sig:int,
                    qb_f12mkr_duration:int, qb_f12mkr_tone:str,
                    qb_t_tsdelta:int,
                    qb_f01mkr_duration:int, qb_f01mkr_tone:str,
@@ -381,7 +381,7 @@ class Time_Domain_Sequence(Waveform):
         qb_f12flat = 0
         
         
-        store_SPT_seq = {'QubitDrive_f12':{}, 'QubitDrive_f01':{}, 'ReadOut':{}}
+        store_APT_seq = {'QubitDrive_f12':{}, 'QubitDrive_f01':{}, 'ReadOut':{}}
         
         for i in range(gen_wfm_amount):
             qb_f01wfm_name = 'QubitDrive_f01_Index_' + str(i+1) 
@@ -395,7 +395,7 @@ class Time_Domain_Sequence(Waveform):
             rd_wfm_name = 'ReadOut_Index_' + str(i+1)
             no = i + 1 
             
-            store_SPT_seq['QubitDrive_f12'][no] = \
+            store_APT_seq['QubitDrive_f12'][no] = \
                                         self.gen_gauss_wfmdata(qb_f12wfm_name,
                                                                 wfm_totlen,
                                                                 qb_f12_offset,
@@ -403,7 +403,7 @@ class Time_Domain_Sequence(Waveform):
                                                                 qb_f12flat, 
                                                                 qb_f12mkr_duration,
                                                                 qb_f01mkr_tone)
-            store_SPT_seq['QubitDrive_f01'][no] = \
+            store_APT_seq['QubitDrive_f01'][no] = \
                                         self.gen_gauss_wfmdata(qb_f01wfm_name,
                                                                 wfm_totlen,
                                                                 qb_f01_offset,
@@ -412,7 +412,7 @@ class Time_Domain_Sequence(Waveform):
                                                                 qb_f01mkr_duration,
                                                                 qb_f01mkr_tone)
             
-            store_SPT_seq['ReadOut'][no] = \
+            store_APT_seq['ReadOut'][no] = \
                                      self.gen_gauss_wfmdata(rd_wfm_name,
                                                             wfm_totlen, 
                                                             rd_offset, 
@@ -421,7 +421,7 @@ class Time_Domain_Sequence(Waveform):
                                                             rd_mkr_duration, 
                                                             rd_mkr_tone)
         
-        return store_SPT_seq 
+        return store_APT_seq 
 
     def gen_EIT_seq(self, gen_wfm_amount:int,
                     wfm_totlen:int, delay_time_delta:int,
@@ -482,7 +482,7 @@ class Time_Domain_Sequence(Waveform):
                                                           rd_mkr_tone)
         return store_EIT_seq
     
-    def gen_SPTrabi_seq(self, gen_wfm_amount:int, wfm_totlen:int,
+    def gen_APTrabi_seq(self, gen_wfm_amount:int, wfm_totlen:int,
                     gauss_sig:int, qb_f12_delta_flat:int,
                     qb_f12mkr_duration:int, qb_f12mkr_tone:str,
                     qb_f01_pumping_pi:int,
@@ -498,7 +498,7 @@ class Time_Domain_Sequence(Waveform):
         
         """
         
-        store_SPTrabi_seq = {'QubitDrive_f12':{}, 'QubitDrive_f01':{}, 'ReadOut':{}}
+        store_APTrabi_seq = {'QubitDrive_f12':{}, 'QubitDrive_f01':{}, 'ReadOut':{}}
         
         for i in range(gen_wfm_amount):
             qb_f12wfm_name = 'QubitDrive_f12_Rabi_Index_' + str(i+1)
@@ -513,7 +513,7 @@ class Time_Domain_Sequence(Waveform):
             rd_wfm_name = 'ReadOut_Rabi_Index_' + str(i+1)
             no = i + 1 
             
-            store_SPTrabi_seq['QubitDrive_f12'][no] = \
+            store_APTrabi_seq['QubitDrive_f12'][no] = \
                                         self.gen_gauss_wfmdata(qb_f12wfm_name,
                                                                 wfm_totlen,
                                                                 qb_f12_offset,
@@ -521,7 +521,7 @@ class Time_Domain_Sequence(Waveform):
                                                                 qb_f12flat, 
                                                                 qb_f12mkr_duration,
                                                                 qb_f01mkr_tone)
-            store_SPTrabi_seq['QubitDrive_f01'][no] = \
+            store_APTrabi_seq['QubitDrive_f01'][no] = \
                                         self.gen_gauss_wfmdata(qb_f01wfm_name,
                                                                 wfm_totlen,
                                                                 qb_f01_offset,
@@ -530,7 +530,7 @@ class Time_Domain_Sequence(Waveform):
                                                                 qb_f01mkr_duration,
                                                                 qb_f01mkr_tone)
             
-            store_SPTrabi_seq['ReadOut'][no] = \
+            store_APTrabi_seq['ReadOut'][no] = \
                                      self.gen_gauss_wfmdata(rd_wfm_name,
                                                             wfm_totlen, 
                                                             rd_offset, 
@@ -539,7 +539,7 @@ class Time_Domain_Sequence(Waveform):
                                                             rd_mkr_duration, 
                                                             rd_mkr_tone)
         
-        return store_SPTrabi_seq 
+        return store_APTrabi_seq 
     
 
     def decorate2seq_format(self):
@@ -553,7 +553,7 @@ class Time_Domain_Sequence(Waveform):
         """
         pass
     
-    def gen_SPT_DarkState_Coherence_seq(self, gen_wfm_amount:int, wfm_totlen:int, gauss_sig:int,
+    def gen_APT_DarkState_Coherence_seq(self, gen_wfm_amount:int, wfm_totlen:int,gauss_sig:int,
                    qb_f12mkr_duration:int, qb_f12mkr_tone:str,
                    qb_t_tsdelta:int, qb_f01_relaxation_delta:int,
                    qb_f01mkr_duration:int, qb_f01mkr_tone:str,
@@ -571,7 +571,7 @@ class Time_Domain_Sequence(Waveform):
         qb_f12flat = 0
         
         
-        store_SPT_DarkState_Coherence_seq = {'QubitDrive_f12':{}, 'QubitDrive_f01':{}, 'ReadOut':{}}
+        store_APT_DarkState_Coherence_seq = {'QubitDrive_f12':{}, 'QubitDrive_f01':{}, 'ReadOut':{}}
         
         for i in range(gen_wfm_amount):
             qb_f01wfm_name = 'QubitDrive_f01_Index_' + str(i+1) 
@@ -585,7 +585,7 @@ class Time_Domain_Sequence(Waveform):
             rd_wfm_name = 'ReadOut_Index_' + str(i+1)
             no = i + 1 
             
-            store_SPT_DarkState_Coherence_seq['QubitDrive_f12'][no] = \
+            store_APT_DarkState_Coherence_seq['QubitDrive_f12'][no] = \
                                         self.gen_gauss_wfmdata(qb_f12wfm_name,
                                                                 wfm_totlen,
                                                                 qb_f12_offset,
@@ -594,7 +594,7 @@ class Time_Domain_Sequence(Waveform):
                                                                 qb_f12mkr_duration,
                                                                 qb_f01mkr_tone)
             
-            store_SPT_DarkState_Coherence_seq['QubitDrive_f01'][no] = \
+            store_APT_DarkState_Coherence_seq['QubitDrive_f01'][no] = \
                                         self.gen_gauss_wfmdata(qb_f01wfm_name,
                                                                 wfm_totlen,
                                                                 qb_f01_offset,
@@ -603,7 +603,7 @@ class Time_Domain_Sequence(Waveform):
                                                                 qb_f01mkr_duration,
                                                                 qb_f01mkr_tone)
             
-            store_SPT_DarkState_Coherence_seq['ReadOut'][no] = \
+            store_APT_DarkState_Coherence_seq['ReadOut'][no] = \
                                      self.gen_gauss_wfmdata(rd_wfm_name,
                                                             wfm_totlen, 
                                                             rd_offset, 
@@ -612,9 +612,66 @@ class Time_Domain_Sequence(Waveform):
                                                             rd_mkr_duration, 
                                                             rd_mkr_tone)
         
-        return store_SPT_DarkState_Coherence_seq
+        return store_APT_DarkState_Coherence_seq
     
     
+    def gen_APT_DarkState_Coherence_Ramsey_seq(self, gen_wfm_amount:int, wfm_totlen:int,gauss_sig:int, qb_f12mkr_duration:int,qb_f12mkr_tone:str,qb_t_tsdelta:int, qb_f12_relaxation_delta:int,qb_f01mkr_duration:int, qb_f01mkr_tone:str,rd_offset:int, rd_flat:int, rd_mkr_duration:int,rd_mkr_tone:str)->dict:
+                   
+                   
+        """
+        Description:
+        
+        Args:
+        
+        Example:
+        
+        """
+        qb_f01flat = 0
+        qb_f12flat = 0
+        
+        
+        store_APT_DarkState_Coherence_Ramsey_seq = {'QubitDrive_f12':{}, 'QubitDrive_f01':{}, 'ReadOut':{}}
+        
+        for i in range(gen_wfm_amount):
+            qb_f01wfm_name = 'QubitDrive_f01_Index_' + str(i+1) 
+            qb_f01_pulsewidth = 2 * self._num_sigma * gauss_sig
+            qb_f01_offset = rd_offset - qb_f01_pulsewidth 
+            
+            qb_delay = qb_t_tsdelta 
+            qb_f12wfm_name = 'QubitDrive_f12_Index_' + str(i+1) 
+            qb_f12_offset = qb_f01_offset - qb_delay - i * qb_f12_relaxation_delta
+            
+            rd_wfm_name = 'ReadOut_Index_' + str(i+1)
+            no = i + 1 
+            
+            store_APT_DarkState_Coherence_Ramsey_seq['QubitDrive_f12'][no] = \
+                                        self.gen_gauss_wfmdata(qb_f12wfm_name,
+                                                                wfm_totlen,
+                                                                qb_f12_offset,
+                                                                gauss_sig,
+                                                                qb_f12flat, 
+                                                                qb_f12mkr_duration,
+                                                                qb_f01mkr_tone)
+            
+            store_APT_DarkState_Coherence_Ramsey_seq['QubitDrive_f01'][no] = \
+                                        self.gen_gauss_wfmdata(qb_f01wfm_name,
+                                                                wfm_totlen,
+                                                                qb_f01_offset,
+                                                                gauss_sig,
+                                                                qb_f01flat, 
+                                                                qb_f01mkr_duration,
+                                                                qb_f01mkr_tone)
+            
+            store_APT_DarkState_Coherence_Ramsey_seq['ReadOut'][no] = \
+                                     self.gen_gauss_wfmdata(rd_wfm_name,
+                                                            wfm_totlen, 
+                                                            rd_offset, 
+                                                            gauss_sig,
+                                                            rd_flat,
+                                                            rd_mkr_duration, 
+                                                            rd_mkr_tone)
+        
+        return store_APT_DarkState_Coherence_Ramsey_seq
     
 
 if __name__=='__main__':
