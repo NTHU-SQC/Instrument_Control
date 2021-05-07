@@ -2,8 +2,9 @@
 import pyvisa as visa
 from time import sleep
 
+
 class Instrument:
-    def __init__(self, inst_name='YokoGS',
+    def __init__(self, inst_name='',
                  inst_visaAddress='GPIB0::1::INSTR',
                  timeout=5):
         """
@@ -33,21 +34,16 @@ class Instrument:
         self.timeout = timeout
         self.rm = visa.ResourceManager()
 
-    def listInstruments(self):
-        print(
-            f'We have installed the below instruments in this computer.\n{self.rm.list_resources()}')
-        #self.inst.close()
-
     def connect(self):
         try:
             self.inst = self.rm.open_resource(self.address,
                                               read_termination='\n',
                                               write_termination=None)
-            print(
-                f'Connect to {self.instName} successfully\nStatement: {self.inst.query("*IDN?")}')
+            print(f'Connect to {self.instName} successfully\n' +
+                  f'Statement: {self.inst.query("*IDN?")}')
         except visa.VisaIOError:
-            print(f'Check "{self.instName}" has been plugin your PC') 
-    
+            print(f'Check "{self.instName}" has been plugin your PC')
+
     def disconnect(self):
         self.inst = self.rm.open_resource(self.address,
                                           read_termination='\n',
@@ -60,4 +56,18 @@ class Instrument:
         self.inst.write('*RST')
         sleep(1)
 
-    
+    @staticmethod
+    def get_inst_address():
+        rm_ = visa.ResourceManager()
+        for index, inst_address in enumerate(rm_.list_resources()):
+            if index == 0:
+                print('We have found the following instruments.')
+            if 'ASRL' in inst_address:
+                continue
+            else:
+                inst = rm_.open_resource(inst_address)
+                print(f'Inst_name: {inst.query("*IDN?")}\n' +
+                      f'Inst_address:{inst_address}\n' +
+                      f'------------------------------------\n')
+                del inst
+        del rm_
