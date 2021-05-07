@@ -1,6 +1,6 @@
 import pyvisa as visa
 import numpy as np
-from time import sleep
+import time
 # import a general instrument core by the method named absolute path import
 from instruments.base.QEL_instrument_base import Instrument
 
@@ -28,13 +28,13 @@ class YokoGS200(Instrument):
         '''
         Get the present value of the dc source.
         '''
-        self.inst.query('SOUR:LEV?')
+        print(self.inst.query('SOUR:LEV?'))
 
     def queryOutput(self):
         '''
         Get the output status
         '''
-        self.inst.query(':OUTP?')
+        print(self.inst.query(':OUTP?'))
 
     def setDCvalue(self, value:float):
         '''
@@ -61,13 +61,14 @@ class YokoGS200(Instrument):
         command = ':OUTP ' + str(status)
         self.inst.write(command)
 
-    def rangeLimit(self, rangeMode='10 mA'):
+    def rangeLimit(self, rangeMode='1 V'):
         '''
         The protective mechanism for configuring DC value
         '''
         command = ':SOUR:RANG '
 
-        if rangeMode in (YokoGS200._rangeVOLT.keys() and YokoGS200._rangeCURR.keys()):
+        if rangeMode in YokoGS200._rangeVOLT.keys() or \
+            rangeMode in YokoGS200._rangeCURR.keys():
             if self.__dcState in ('CURRENT'):
                 command = command + str(YokoGS200._rangeCURR[rangeMode])
             elif self.__dcState in ('VOLTAGE'):
@@ -75,7 +76,7 @@ class YokoGS200(Instrument):
 
             # execute the above setting
             self.inst.write(command)
-            print(f'\nrangeMode: "{rangeMode}"", Setting successfully!')
+            print(f'\nrangeMode: "{rangeMode}", Setting completely!')
 
         else:
             if (rangeMode in YokoGS200._rangeVOLT.keys()) and \
@@ -113,18 +114,18 @@ class YokoGS200(Instrument):
         command = ':PROG:SLOP ' + str(slopTime)
         self.inst.write(command)
     
-    def sweepRate(self, sweepTime, repeat=0):
+    def sweepRate(self, sweepTime, intervalTime, repeat=0):
         '''
         set slope time and interval time with the same sweepTime
         '''
         self._setRepeat(repeat)
-        self._setIntervalTime(sweepTime)
+        self._setIntervalTime(intervalTime)
         self._setSlope(sweepTime)
 
     def sweepSlopeSetting(self, startPoint, endPoint):
         '''
-        the value of startPoint is smaller than endPoint -> RisingSlope
-        the value of startPoint is larger than endPoint -> DecaySlope  
+        the value of startPoint is smaller than endPoint -> Rising
+        the value of startPoint is larger than endPoint -> Falling  
         '''
         checkRangeLimit=str(self.inst.query(':SOUR:RANG?'))
         checkDCState=self.inst.query(':SOUR:FUNC?')
@@ -137,88 +138,31 @@ class YokoGS200(Instrument):
         self.inst.write(endcmd)
         self.inst.write(':PROG:EDIT:END')
      
-    def microwaveSwitch(self, sweepTime=0.3, waitTime=2, startPoint=0.00, endPoint=0.005):
+    def microwaveSwitch(self, sweepTime, intervalTime, startPoint, endPoint):
         '''
         Climb to a high point at a constant rate
         When climbing to a high point, stay for a fixed time
         Finally, gradually reduce the voltage value at the same rate until 0V
         '''
-        print('\nStart to do a mission called microwaveSwitch.')
-        self.sweepRate(sweepTime)
-        sleep(1)
-        print('Processing.')
-        # Rising
+        print('\nStarting to execute the microwaveSwitch.')
+		
+        # Rising and waiting
+        self.sweepRate(sweepTime, intervalTime)
+        print('Rising Part.')
         self.sweepSlopeSetting(startPoint, endPoint)
         self.setOutput(status=1)
         self.inst.write(":PROG:RUN")
-
-        # Wait
-        sleep(waitTime)
-        print('Processing...')
-        # Decay
+        print('Falling Part...')
+        self.inst.write(":PROG:HOLD")
+        self.sweepRate(sweepTime, intervalTime)
+        
+		# Falling and waiting
         self.sweepSlopeSetting(endPoint, startPoint)
         self.inst.write(":PROG:RUN")
-        print('Processing.....')
-        sleep(1)
-        #self.setDCvalue(value=0)
-        print('Finish a mission called microwaveSwitch.')
 
 
 
 if __name__ == "__main__":
-    '''
-    1. QEL_instruments structure
-            QEL_instuments/
-                ├── Insturments/
-                    ├── Antrisu/
-                        ├── __init__.py
-                        └──
-                    ├── Tektronix_AWG5208/
-                        ├── __init__.py
-                        └── 
-                    ├──YokoGS/
-                        ├── __pycache__/
-                            └── QEL_instrument.cpython-38.pyc
-                        ├── __init__.py
-                        └── YokoGS.py
-                    ├── __init__.py
-                    └──
-                └── Utility
-                    ├── __pycache__/
-                        ├── QEL_instrument.cpython-38.pyc
-                        └──
-                    └── QEL_instrument.py
-    2. How to activate this code?
-            In this tutorial, We can follow the below description to work it.
-                1. Open Windows Terminal and change the current directory to the below address
-                   For example, you can see this path by commanding "pwd" in Windows Terminal
-                        PS C:\\Users\\QEL\\OneDrive - 清華大學\\桌面\\Labber開發\\NTHU_QEL_Python\\QEL\\QEL_instruments> pwd
-
-                        Path
-                        ----
-                        C:\\Users\\QEL\\OneDrive - 清華大學\\桌面\\Labber開發\\NTHU_QEL_Python\\QEL\\QEL_instruments
-                2. Execute the following command on Windows Terminal
-                        python -m Instruments.YokoGS.YokoGS
-                3. Finally, you can see the result.
-                        Connect to YokoGS200 successfully
-                        Statement: YOKOGAWA,GS210,91T810991,2.02
-
-                        Start to do a mission called microwaveSwitch.
-                        Processing.
-                        Processing...
-                        Processing.....
-                        Finish a mission called microwaveSwitch.
-    '''
-
-    '''
-    How to find which instruments are connected to PC?
-    In this case, we can use the following steps to find the address of the specific instrument on the PC platform.
-    1. Create a object named Test
-    2. Then, you can find any devices on this computer by calling the function named "listInstruments()"
-    '''
-    # Test = Instrument()
-    # Test.listInstruments()
-
     def main():
         '''
         Set a dc value pulse by doing a remote control
@@ -236,29 +180,5 @@ if __name__ == "__main__":
                         waitTime: When climbing to a high point, stay for a fixed time
                         endPoint: Finally, gradually reduce the voltage value at the same rate until 0V
         '''
-        # Step 1.
-        YokoGS = YokoGS200(inst_name='YokoGS200',
-                           inst_visaAddress='USB0::0x0B21::0x0039::91T810991::INSTR',
-                           dcState='CURRENT')
-        
-        # Step 2.
-        YokoGS.connect()
-
-        # Step 3.
-        YokoGS.setDCmode()
-        
-        # Step 4. 
-        YokoGS.microwaveSwitch(sweepTime=0.3,
-                               waitTime=5,
-                               startPoint=0.00,
-                               endPoint=0.005)
-        
-    
-    # Set a dc value pulse by doing a remote control
-    main()
-
-
-    # Other feature
-    # YokoGS.disconnect()
-    # YokoGS.resetToDefault()
+		pass
     
