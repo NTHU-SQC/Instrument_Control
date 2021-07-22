@@ -22,9 +22,10 @@ def TimeSpan(span=.0, sampling_rate=1, delEnd=True):
  
 def GaussianPulse(sigmaLen, flatLen, Nsigma = 4):
     
-    pulsewidth = flatLen + Nsigma*sigmaLen*2 + 1;
+    pulsewidth = flatLen + Nsigma*sigmaLen*2;
     GaussWfm = np.empty(pulsewidth, dtype=np.float64)
-    Pulselist = np.linspace(0, pulsewidth-1, pulsewidth, dtype=int)
+    #Pulselist = np.linspace(0, pulsewidth-1, pulsewidth, dtype=int)
+    Pulselist = TimeSpan(pulsewidth)
     GaussPeak = Nsigma * sigmaLen
     for i in range(len(Pulselist)):
     #(section 1)
@@ -45,7 +46,8 @@ def GaussianPulse(sigmaLen, flatLen, Nsigma = 4):
 def SquarePulse(flatLen):
     
     SquareWfm = np.ones(flatLen)
-    Pulselist = np.linspace(0,flatLen-1,flatLen,dtype=int)
+    #Pulselist = np.linspace(0,flatLen-1,flatLen,dtype=int)
+    Pulselist = TimeSpan(flatLen)
     variables = {"function":SquarePulse,"Pulsewidth":flatLen}
 
     return packer(Pulselist, SquareWfm, variables, [True, True], name="")
@@ -54,7 +56,8 @@ def SquarePulse(flatLen):
 def NullPulse(nullLen):
 
     NullWfm = np.zeros(nullLen,dtype = np.float64)
-    Pulselist = np.linspace(0,nullLen-1,nullLen,dtype=int)
+    #Pulselist = np.linspace(0,nullLen-1,nullLen,dtype=int)
+    Pulselist = TimeSpan(nullLen)
     variables = {"function":NullPulse,"Pulsewidth":nullLen}
 
     return packer(Pulselist, NullWfm, variables, [True, True], name="")
