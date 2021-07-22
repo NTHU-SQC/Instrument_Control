@@ -677,6 +677,63 @@ class Time_Domain_Sequence(Waveform):
         
         return store_APT_DarkState_Coherence_Ramsey_seq
     
+    
+    def gen_MAP_Twotone_pumping_seq(self, gen_wfm_amount:int, wfm_totlen:int, gauss_sig:int, qb2_00to02_pi:int, qb2_00to02_mkr_duration:int, qb2_00to02_mkr_tone:str, qb1_driving_delta_flat:int,qb1_drivingmkr_duration:int, qb1_drivingmkr_tone:str, rd_offset:int, rd_flat:int, rd_mkr_duration:int, rd_mkr_tone:str) -> dict:
+        """
+        Description:
+        
+        Args:
+        
+        Example:
+        
+        """
+        
+        store_MAPTwotone_seq = {'qb2_pumping':{}, 'qb1_driving':{}, 'ReadOut':{}}
+        
+        for i in range(gen_wfm_amount):
+            
+            qb1_driving_wfm_name = "Qubit1Driving_Index_" + str(i+1)
+            qb1_driving_flat = i * qb1_driving_delta_flat
+            qb1_driving_pulsewidth = 2 * self._num_sigma * gauss_sig + qb1_driving_flat
+            qb1_driving_offset     = rd_offset - qb1_driving_pulsewidth
+            
+            qb2_pumping_wfm_name = "Qubit2Pumping_Index_" + str(i+1)
+            qb2_pumping_flat = qb2_00to02_pi
+            qb2_pumping_pulsewidth = 2 * self._num_sigma * gauss_sig + qb2_pumping_flat
+            qb2_pumping_offset = rd_offset - qb1_driving_pulsewidth - qb2_pumping_pulsewidth
+            
+           
+            rd_wfm_name = 'ReadOut_Rabi_Index_' + str(i+1)
+            no = i + 1 
+            
+            store_MAPTwotone_seq['qb2_pumping'][no] = \
+                                        self.gen_gauss_wfmdata(qb2_pumping_wfm_name,
+                                                                wfm_totlen,
+                                                                qb2_pumping_offset,
+                                                                gauss_sig,
+                                                                qb2_pumping_flat, 
+                                                                qb2_00to02_mkr_duration,
+                                                                qb2_00to02_mkr_tone)
+            store_MAPTwotone_seq['qb1_driving'][no] = \
+                                        self.gen_gauss_wfmdata(qb1_driving_wfm_name,
+                                                                wfm_totlen,
+                                                                qb1_driving_offset,
+                                                                gauss_sig,
+                                                                qb1_driving_flat, 
+                                                                qb1_drivingmkr_duration,
+                                                                qb1_drivingmkr_tone)
+            
+            store_MAPTwotone_seq['ReadOut'][no] = \
+                                     self.gen_gauss_wfmdata(rd_wfm_name,
+                                                            wfm_totlen, 
+                                                            rd_offset, 
+                                                            gauss_sig,
+                                                            rd_flat,
+                                                            rd_mkr_duration, 
+                                                            rd_mkr_tone)
+        
+        return store_MAPTwotone_seq 
+    
   
 
 if __name__=='__main__':
