@@ -193,11 +193,8 @@ class AWG5208(Instrument):
         self._seqList[seq_name][track_index-1][step_index-1] = wfm_name
 
         # Update number of needed markers
-        if self._wfm_mkr_num[wfm_name] > self._seq_mkr_num[seq_name][
-                track_index-1
-                ]:
-            self._seq_mkr_num[seq_name][track_index-1
-                                        ] = self._wfm_mkr_num[wfm_name]
+        if self._wfm_mkr_num[wfm_name] > self._seq_mkr_num[seq_name][track_index-1]:
+            self._seq_mkr_num[seq_name][track_index-1] = self._wfm_mkr_num[wfm_name]
 
     def upload_seq(self, seq_name):
         """
